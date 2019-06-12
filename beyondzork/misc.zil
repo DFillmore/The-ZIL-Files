@@ -81,6 +81,7 @@
 <GLOBAL FORE:NUMBER ,C-WHITE>
 <GLOBAL INCOLOR:NUMBER ,C-CYAN>
 <GLOBAL GCOLOR:NUMBER ,C-RED>
+<GLOBAL ZSPEC:NUMBER 0> "Z-Machine Standard version used by the interpreter."
 
 <ROUTINE GO () 
        	 <SETG HERE ,HILLTOP>
@@ -469,6 +470,7 @@
 	 <RTRUE>>	 
 
 <ROUTINE INITVARS ("AUX" X)
+	 <SETG ZSPEC <LOWCORE STDREV>> ; Establish terp's Standard Revision 
 	 <SETG HOST <LOWCORE INTID>> ; "Establish host machine ID."
 	 <SETG COLORS? <BAND <LOWCORE (ZVERSION 1)> 1>>
 	 <SETG GRAPHICS? <BAND <LOWCORE FLAGS> 8>>
@@ -486,13 +488,15 @@
 	 	          
 	 <SET X <LOWCORE HWRD>> ; "Get pixel width of screen."	 
 	 <SETG WIDTH </ .X ,CWIDTH>> ; "Screen width in chars."
-	 <COND (<G? ,WIDTH 80>
-		<SETG WIDTH 80>)>
 	 
 	 <SET X <LOWCORE VWRD>> ; "Get pixel height of screen."	 
-	 <SETG HEIGHT </ .X ,CHEIGHT>> ; "Screen width in chars."
+	 <SETG HEIGHT </ .X ,CHEIGHT>> ; "Screen height in chars."
 	 	 
-	 <SETG DWIDTH <- ,WIDTH %<+ ,MWIDTH 3>>> ; "Width of DBOX."
+	 <COND (<G=? ,WIDTH 80>
+		<SETG DWIDTH <- 80 %<+ ,MWIDTH 3>>>)
+	       (<L? ,WIDTH 80>   
+		<SETG DWIDTH <- ,WIDTH %<+ ,MWIDTH 3>>>)> ; "Width of DBOX."
+
 	 <SETG BOXWIDTH ,DWIDTH>
 	 <COND (<EQUAL? ,HOST ,APPLE-2C>
 		<DEC BOXWIDTH>)>
@@ -581,7 +585,10 @@
 	 
 	 <TO-TOP-WINDOW>
 	 <SET X <FONT ,F-NEWFONT>>
-	 <SET REDGE <- <- ,WIDTH ,MWIDTH> 1>>
+	 <COND (<G? ,WIDTH 80>
+		<SET REDGE <- <- 80 ,MWIDTH> 1>>)
+		(<L=? ,WIDTH 80>
+		<SET REDGE <- <- ,WIDTH ,MWIDTH> 1>>)>
 	 
 	 <DO-CURSET 2 1>
 	 <PRINTC ,TLC>
@@ -754,7 +761,10 @@
          <TO-TOP-WINDOW>
 	 <COND (<T? ,VT220>
 		<SET X <FONT ,F-NEWFONT>>)>
-	 <DO-CURSET 1 <- ,WIDTH ,MWIDTH>>
+	 <COND (<G=? ,WIDTH 80>
+		<DO-CURSET 1 <- 80 ,MWIDTH>>)
+	       (<L? ,WIDTH 90>
+	        <DO-CURSET 1 <- ,WIDTH ,MWIDTH>>)>
 	 <PRINTT ,MAP ,MWIDTH ,MHEIGHT>
 	 <TO-BOTTOM-WINDOW>
 	 <RFALSE>>
