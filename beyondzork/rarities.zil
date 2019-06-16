@@ -852,27 +852,30 @@
 		   <RTRUE>)
 		  (<NO-WORD? .WORD>
 		   <RFALSE>)>>>
-	 
-"INITVARS must be called first!"
 
-<GLOBAL VT100:FLAG <>>
+<ROUTINE SCOLORS ("AUX" TBL)
+	<SET TBL <GET ,MACHINE-COLORS ,HOST>>
+	<COND (<G? 10 ,HOST>
+			<SET .TBL 0>)>
+	<COND (<G?  0 ,ZSPEC>
+	 		<SET .TBL ,STANDARD-COLORS>)>
+	<RETURN .TBL>>
+
+"INITVARS must be called first!"
 
 <ROUTINE STARTUP ("AUX" X TBL CNT)
 	 <COPYT ,VOCAB ,VOCAB2 <+ <GETB ,VOCAB 0> 2>> ; "Init VOCAB2."
 	 <DEFAULT-SOFTS>
-	 <SET TBL <GET ,MACHINE-COLORS ,HOST>>
+	 
+	 <SET TBL <SCOLORS>>
+
 	 <COND (<T? .TBL>
 		<SET TBL <GET .TBL 1>>
 		<SETG BGND <GETB .TBL 0>>
 		<SETG FORE <GETB .TBL 1>>
 		<SETG INCOLOR <GETB .TBL 2>>
 		<SETG GCOLOR <GETB .TBL 3>>)>
-	 <COND (<EQUAL? ,HOST ,DEC-20>
-		<CLEAR -1>
-		<TELL CR "Is this a VT220?">
-		<COND (<NOT <YES?>>
-		       <SETG VT100 T>
-		       <SETUP-APPLE-MODE>)>)>	       
+	       
 	 <COLOR ,FORE ,BGND>
 	 <CLEAR -1>
 	 <CRLF>
@@ -1732,7 +1735,7 @@ By what Name shall your character be known?">
 
 <ROUTINE V-COLOR ("AUX" TBL PAL CNT)
 	 <COND (<PRSO? ROOMS>
-		<SET TBL <GET ,MACHINE-COLORS ,HOST>>
+		<SET TBL <SCOLORS>>
 		<COND (<AND <ZERO? ,COLORS?>
 			    <EQUAL? ,HOST ,ATARI-ST>>
 		       <SET TBL ,ST-MONO>)
