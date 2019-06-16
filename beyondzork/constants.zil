@@ -104,6 +104,11 @@
 	       BWCR DWWW BWWW WBBB> ; "Apple //gs"
 	   >>
 
+<CONSTANT STANDARD-COLORS
+		<PLTABLE
+	       BWCR DWWW BWWW WBBB>>
+		   
+
 "Apple //c MouseText characters."
 
 <CONSTANT APPLE-LEFT 95>
