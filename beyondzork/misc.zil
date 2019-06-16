@@ -470,7 +470,7 @@
 	 <RTRUE>>	 
 
 <ROUTINE INITVARS ("AUX" X)
-	 <SETG ZSPEC <LOWCORE STDREV>> ; Establish terp's Standard Revision 
+	 <SETG ZSPEC <LOWCORE STDREV>> ; "Establish terp's Standard Revision"
 	 <SETG HOST <LOWCORE INTID>> ; "Establish host machine ID."
 	 <SETG COLORS? <BAND <LOWCORE (ZVERSION 1)> 1>>
 	 <SETG GRAPHICS? <BAND <LOWCORE FLAGS> 8>>
@@ -511,11 +511,12 @@
 	 <SETG MAX-DHEIGHT ,NORMAL-DHEIGHT>
 	 <SETG DHEIGHT ,MAX-DHEIGHT>
 	 <SETG MAP-ROUTINE ,CLOSE-MAP>
-	 <COND (<OR <T? ,VT100>
-		    <EQUAL? ,HOST ,APPLE-2E ,APPLE-2C>
-		    <AND <ZERO? ,GRAPHICS?>
-			 <EQUAL? ,HOST ,IBM>>>
-		<SETUP-APPLE-MODE>)>
+	 
+	 <SET X <FONT ,F-NEWFONT>>
+	<FONT ,F-DEFAULT>
+	 <COND (<OR <ZERO? ,ZSPEC>
+	 			<ZERO? .X >>
+	 		<SETUP-APPLE-MODE>)>	 
 	 <RFALSE>>
 	 	 	 	      
 <ROUTINE SETUP-APPLE-MODE ()
